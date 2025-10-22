@@ -1,0 +1,17 @@
+name: populate-db-post-deploy.yml
+on:
+  deployment_status:
+    types: [success]
+
+jobs:
+  call-setup:
+    runs-on: ubuntu-latest
+    if: github.event.deployment_status.state == 'success'
+    steps:
+      - env:
+          DB_SETUP_URL: website-nameslist-api-backend.vercel.app/api/setup/dbSetup?secret={{secrets.DB_SETUP_SECRET}}
+        run:
+          curl -s -X GET "$DB_SETUP_URL"
+
+
+
