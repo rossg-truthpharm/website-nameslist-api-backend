@@ -8,13 +8,13 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
       "dest": "/api/app.ts"
     }
   ],
   "crons": [
     {
-      "path": "/api/cron/job.ts",
+      "path": "/api/cron/updatedb",
       "schedule": "0 2 * * 0"
     }
   ]

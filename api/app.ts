@@ -1,29 +1,38 @@
 import { Redis } from '@upstash/redis'
+import cors = require('cors');
+
+import {setup} from './setup/dbSetup';
+import {UPDATE} from './cron/updateDB';
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const app = require('express')();
 const redis: Redis = Redis.fromEnv();
 
-app.get('/', (req: VercelRequest, res: VercelResponse) => {
-    res.send('operational');
+app.use(cors());
+
+app.get('/api/setup', async (req: VercelRequest, res: VercelResponse) => {
+    await setup(req, res);
+})
+
+app.get('/api/cron/updatedb', async (req: VercelRequest, res: VercelResponse) => {
+    await UPDATE(req, res);
 })
 
 app.get('/api/nameslist', async (req: VercelRequest, res: VercelResponse) => {
-    const firstName = req.query.first;
-    const lastName = req.query.last;
-    //console.log(req.query);
-    const nameToSearch = `${firstName.toString().trim()} ${lastName.toString().trim()}`;
-    //console.log(nameToSearch);
+    const name = req.query.name.toString().toLowerCase();
+    console.log(req.query);
+    console.log(name);
     const redis_key_name = 'names_list';
-    const hasName = await redis.sismember(redis_key_name, nameToSearch.toLowerCase());
-
+    const hasName = await redis.sismember(redis_key_name, name);
+    console.log(hasName);
     if (hasName) {
-        res.json({'has_name': true})
+        res.status(200).json({'found': true})
     } else {
-        res.json({'has_name': false})
+        res.status(200).json({'found': false})
     }
 })
+
 
 export default app;
 
