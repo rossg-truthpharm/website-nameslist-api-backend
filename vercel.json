@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "builds": [
+    {
+      "src": "api/app.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/app.ts"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/updatedb",
+      "schedule": "0 2 * * 0"
+    }
+  ]
+}
