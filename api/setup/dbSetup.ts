@@ -20,10 +20,10 @@ const fill_redis = async (): Promise<void> => {
 export async function setup(req: VercelRequest, res: VercelResponse) {
     const secret = process.env.DB_SETUP_SECRET;
 
-    console.log(secret);
-    console.log(req.query.secret);
+    console.log(`Env secret: ${secret.toString().trim()}`);
+    console.log(`Remove Secret: ${req.query.secret.toString().trim()}`);
 
-    if (req.query.secret != secret) {
+    if (req.query.secret.toString().trim() != secret.toString().trim()) {
         res.status(401).json({error: 'unauthorized'});
         return;
     }
