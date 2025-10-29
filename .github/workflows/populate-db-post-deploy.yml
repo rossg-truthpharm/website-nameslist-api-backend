@@ -21,7 +21,7 @@ jobs:
           #DB_SETUP_URL: https://website-nameslist-api-backend.vercel.app/api/setup?secret=${{secrets.DB_SETUP_SECRET}}
           DB_SECRET: ${{secrets.DB_SETUP_SECRET}}
         run: |#curl -s -X GET "$DB_SETUP_URL"
-          curl -s -X GET https://website-nameslist-api-backend.vercel.app/api/setup?secret="$DB_SECRET"
+          curl -s -X GET "https://website-nameslist-api-backend.vercel.app/api/setup?secret=$DB_SECRET"
 
       - name: Debug event
         run: echo "${{ toJson(github.event) }}"
