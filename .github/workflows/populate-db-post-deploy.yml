@@ -1,7 +1,16 @@
 name: populate-db-post-deploy.yml
 on:
   deployment_status:
-    types: [success]
+    types: [ success ]
+  workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        description: "test"
+        required: false
+
+
+
 
 jobs:
   call-setup:
