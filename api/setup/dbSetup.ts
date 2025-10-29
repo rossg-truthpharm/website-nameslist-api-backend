@@ -21,7 +21,7 @@ export async function setup(req: VercelRequest, res: VercelResponse) {
     const secret = process.env.DB_SETUP_SECRET;
 
     console.log(`Env secret: ${secret.toString().trim()}`);
-    console.log(`remote Secret: ${req.query}`);
+    console.log(`remote Secret: ${req.query.secret.toString().trim()}`);
 
     if (req.query.secret.toString().trim() != secret.toString().trim()) {
         res.status(401).json({error: 'unauthorized'});
