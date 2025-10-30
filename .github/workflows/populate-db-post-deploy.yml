@@ -1,9 +1,12 @@
 name: populate-db-post-deploy.yml
 on:
-  status:
-    types: [ success ]
-    branches:
-      - main
+#  status:
+#    types: [ success ]
+#    branches:
+#      - main
+  repository_dispatch:
+    types:
+      - 'vercel.deployment.success'
   workflow_dispatch:
     inputs:
       debug:
@@ -21,10 +24,10 @@ jobs:
     steps:
       - name: Call setup DB Route
         env:
-          #DB_SETUP_URL: https://website-nameslist-api-backend.vercel.app/api/setup?secret=${{secrets.DB_SETUP_SECRET}}
-          DB_SECRET: ${{ secrets.DB_SETUP_SECRET }}
-        run: |#curl -s -X GET "$DB_SETUP_URL"
-          curl -s -X GET "https://website-nameslist-api-backend.vercel.app/api/setup?secret=$DB_SECRET"
+          DB_SETUP_URL: "https://website-nameslist-api-backend.vercel.app/api/setup?secret=${{secrets.DB_SETUP_SECRET}}"
+          #DB_SECRET: ${{ secrets.DB_SETUP_SECRET }}
+        run: curl -s -X GET "$DB_SETUP_URL"
+          #curl -s -X GET "https://website-nameslist-api-backend.vercel.app/api/setup?secret=$DB_SECRET"
 
     
 
