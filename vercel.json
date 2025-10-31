@@ -17,5 +17,10 @@
       "path": "/api/cron/updatedb",
       "schedule": "0 2 * * 0"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "development": false
+    }
+  }
 }
