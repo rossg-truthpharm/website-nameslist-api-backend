@@ -1,6 +1,42 @@
 import {JWT} from "google-auth-library";
 import {google} from "googleapis";
 
+async function getRowValue(sheet: any, sheet_id: String): Promise<String[]> {
+    const row1Range = 'Loved Ones to Be Memorialized!1:1';
+
+    const firstNameRow: String = "Your loved one's name to be memorialized: (First Name)";
+    const lastNameRow: String = "Your loved one's name to be memorialized: (Last Name)";
+
+    let values: String[];
+    try {
+        const rows = await sheet.spreadsheets.values.get({
+            spreadsheet_id: sheet_id,
+            range: row1Range
+        })
+        values = rows.data.values[0];
+    } catch (error) {
+        console.error(error);
+    }
+
+    const firstNameIndex = values.indexOf(firstNameRow);
+    const lastNameIndex = values.indexOf(lastNameRow);
+
+    return [indexToColumnLetter(firstNameIndex), indexToColumnLetter(lastNameIndex)];
+}
+
+function indexToColumnLetter(index: number): String {
+    let col: String = "";
+    let dividend:number = index + 1; // Convert to 1-based for the math
+    let remainder: number;
+
+    while (dividend > 0) {
+        remainder = (dividend - 1) % 26;
+        col = String.fromCharCode(65 + remainder) + col; // 65 is ASCII for 'A'
+        dividend = Math.floor((dividend - 1) / 26);
+    }
+    return col;
+}
+
 function check_name(firstName: String, lastName: String): boolean {
     if (firstName === "" || lastName === "") {return false;}
     if (typeof firstName === "undefined" || typeof lastName === "undefined") {return false;}
@@ -34,10 +70,6 @@ let googleSheets = async () => {
     }
 
 
-    // let auth: GoogleAuth = new GoogleAuth({
-    //
-    //     scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
-    // })
     let authClient: any;
 
     try {
@@ -56,8 +88,10 @@ let googleSheets = async () => {
 
     const spreadsheet_id = process.env.SPREADSHEET_ID;
 
-    let first_name_col = "T";
-    let last_name_col = "U";
+    //let first_name_col = "T";
+    //let last_name_col = "U";
+
+    const [first_name_col, last_name_col] = await getRowValue(sheet, spreadsheet_id);
 
     const firstNameRange = `Loved Ones to Be Memorialized!${first_name_col}:${first_name_col}`;
     const lastNameRange = `Loved Ones to Be Memorialized!${last_name_col}:${last_name_col}`;
@@ -73,6 +107,9 @@ let googleSheets = async () => {
 
     const first_vals: String[][] = firstName_res.data.values
     const last_vals: String[][] = lastName_res.data.values
+
+    first_vals.shift();
+    last_vals.shift();
 
     return [first_vals, last_vals];
 }
