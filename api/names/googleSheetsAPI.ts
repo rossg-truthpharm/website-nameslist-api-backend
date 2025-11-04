@@ -10,7 +10,7 @@ async function getRowValue(sheet: any, sheet_id: String): Promise<String[]> {
     let values: String[];
     try {
         const rows = await sheet.spreadsheets.values.get({
-            spreadsheet_id: sheet_id,
+            spreadsheetId: sheet_id,
             range: row1Range
         })
         values = rows.data.values[0];
@@ -92,6 +92,8 @@ let googleSheets = async () => {
     //let last_name_col = "U";
 
     const [first_name_col, last_name_col] = await getRowValue(sheet, spreadsheet_id);
+
+    console.log(`First Name Col: ${first_name_col}, Last Name Col: ${last_name_col}`);
 
     const firstNameRange = `Loved Ones to Be Memorialized!${first_name_col}:${first_name_col}`;
     const lastNameRange = `Loved Ones to Be Memorialized!${last_name_col}:${last_name_col}`;
