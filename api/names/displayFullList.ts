@@ -2,6 +2,16 @@ import { Redis } from '@upstash/redis'
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
+function capitalizeName(name: String): String {
+    const splitName: String[] = name.split(' ');
+    const capitalizedNames: String[] = splitName.map((name: String): String => {
+        if (name.length < 1) {
+            return '';
+        }
+        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    });
+    return capitalizedNames.join(' ');
+}
 
 export async function displayNamesList(req: VercelRequest, res: VercelResponse): Promise<void> {
     const redis = Redis.fromEnv();
@@ -9,9 +19,8 @@ export async function displayNamesList(req: VercelRequest, res: VercelResponse):
     const redisLastUpdated: string = "last_updated";
     const names: String[] = await redis.smembers(redisNamesListKey);
     const lastUpdatedDateStr: string = await redis.get(redisLastUpdated);
-    const lastUpdated = Date.parse(lastUpdatedDateStr);
-
-    const listItems = names.map((name) => `<li>${name}</li>`).join('\n');
+    const lastUpdated = new Date(lastUpdatedDateStr).toDateString();
+    const listItems = names.map((name) => `<li>${capitalizeName(name)}</li>`).join('\n');
     const html = `
     <!DOCTYPE html>
     <html lang="en">
